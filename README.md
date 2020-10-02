@@ -1,0 +1,2 @@
+# PorLibOfficeUpd
+Portable LibreOffice Updater
