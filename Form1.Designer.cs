@@ -92,7 +92,7 @@
             this.groupBox2.Size = new System.Drawing.Size(306, 53);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Test Versions";
+            this.groupBox2.Text = "Preview Versions";
             // 
             // button1
             // 

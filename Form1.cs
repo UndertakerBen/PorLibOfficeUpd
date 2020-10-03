@@ -23,6 +23,8 @@ namespace Portable_Libre_Office
         private readonly string deskDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
         private readonly string startMenu = Environment.GetFolderPath(Environment.SpecialFolder.Programs);
         string branch = "";
+        private readonly int a;
+        private readonly int b;
         public Form1()
         {
             InitializeComponent();
@@ -65,119 +67,130 @@ namespace Portable_Libre_Office
                         groupBox1.Size = new Size(groupBox2.Size.Width + 18, groupBox3.Location.Y + groupBox3.Size.Height);
                         HttpWebRequest request2 = (HttpWebRequest)WebRequest.Create("https://download.documentfoundation.org/libreoffice/testing/" + test1[0] + "/win/x86_64/");
                         //request2.UserAgent = "LibreOffice 6.2.3.2(aecc05fe267cc68dde00352a451aa867b3b546ac; Windows; X86_64; de; )";
-                        var response2 = request2.GetResponse();
-                        using (StreamReader reader2 = new StreamReader(response2.GetResponseStream()))
+                        try
                         {
-                            string[] responseFromReader2 = reader2.ReadToEnd().Split(new char[] { '\n' });
-                            for (int k = 0; k < responseFromReader2.GetLength(0); k++)
+                            HttpWebResponse response2 = (HttpWebResponse)request2.GetResponse();
+                            if (response2.StatusCode == HttpStatusCode.OK)
                             {
-                                if (responseFromReader2[k].Contains(".msi\""))
+                                using (StreamReader reader2 = new StreamReader(response2.GetResponseStream()))
                                 {
-                                    comboBox.Items.AddRange(new object[] { responseFromReader2[k].Substring(responseFromReader2[k].IndexOf("<td><a href=\"", +13)).Split(new char[] { '"' }, 3)[1] });
-                                    if (responseFromReader2[k].Contains("x64.msi"))
+                                    string[] responseFromReader2 = reader2.ReadToEnd().Split(new char[] { '\n' });
+                                    for (int k = 0; k < responseFromReader2.GetLength(0); k++)
                                     {
-                                        string[] test3 = responseFromReader2[k].Substring(responseFromReader2[k].IndexOf("<td><a href=\"", +13)).Split(new char[] { '"' }, 3)[1].Split(new char[] { '_' }, 3);
-                                        labeltext = $"{test3[0]} {test3[1]}";
+                                        if (responseFromReader2[k].Contains(".msi\""))
+                                        {
+                                            comboBox.Items.AddRange(new object[] { responseFromReader2[k].Substring(responseFromReader2[k].IndexOf("<td><a href=\"", +13)).Split(new char[] { '"' }, 3)[1] });
+                                            if (responseFromReader2[k].Contains("x64.msi"))
+                                            {
+                                                string[] test3 = responseFromReader2[k].Substring(responseFromReader2[k].IndexOf("<td><a href=\"", +13)).Split(new char[] { '"' }, 3)[1].Split(new char[] { '_' }, 3);
+                                                labeltext = $"{test3[0]} {test3[1]}";
+                                            }
+                                        }
+                                    }
+                                    reader2.Close();
+                                }
+                            }
+                            Label label = new Label
+                            {
+                                Location = new Point(10, 20 + 25 * (a++)),
+                                Size = new Size(200, 23),
+                                Text = labeltext,
+                                TextAlign = ContentAlignment.BottomLeft,
+                                ForeColor = Color.Black,
+                                Font = new Font("Microsoft Sans Serif", 9.25F, FontStyle.Bold, GraphicsUnit.Point, 0)
+                            };
+                            groupBox2.Controls.Add(label);
+                            Button button1 = new Button
+                            {
+                                Text = "x86",
+                                Location = new Point(label.Location.X + label.Size.Width + 20, 20 + 25 * (a-1)),
+                                ForeColor = Color.Black,
+                                Size = new Size(50, 23)
+                            };
+                            groupBox2.Controls.Add(button1);
+                            Button button2 = new Button
+                            {
+                                Text = "x64",
+                                Location = new Point(button1.Location.X + button1.Width + 5, 20 + 25 * (a-1)),
+                                ForeColor = Color.Black,
+                                Size = new Size(50, 23)
+                            };
+                            Button button3 = new Button
+                            {
+                                Text = "x86",
+                                Location = new Point(label.Location.X, label.Location.Y),
+                                Size = new Size(50, 23)
+                            };
+                            Button button4 = new Button
+                            {
+                                Text = "x64",
+                                Location = new Point(button3.Location.X + button3.Width + 5, label.Location.Y),
+                                Size = new Size(50, 23)
+                            };
+                            groupBox2.Controls.Add(button2);
+                            if (IntPtr.Size != 8)
+                            {
+                                button2.Enabled = false;
+                                button4.Enabled = false;
+                            }
+                            groupBox2.Padding = new Padding(5);
+                            button1.Click += new EventHandler(Button1_Click);
+                            button2.Click += new EventHandler(Button2_Click);
+                            button3.Click += new EventHandler(Button3_Click);
+                            button4.Click += new EventHandler(Button4_Click);
+                            groupBox5.Controls.Add(button3);
+                            groupBox5.Controls.Add(button4);
+                            groupBox5.Size = new Size(groupBox5.Size.Width, 25 * (test.GetLength(0) - 1));
+                            groupBox6.Location = new Point(groupBox2.Location.X, groupBox2.Location.Y + groupBox2.Size.Height + 5);
+                            groupBox4.Size = new Size(groupBox2.Size.Width + 18, groupBox3.Location.Y + groupBox3.Size.Height);
+                            groupBox4.Location = new Point(groupBox1.Location.X + groupBox1.Size.Width + 5, groupBox1.Location.Y);
+                            comboBox.SelectedIndex = 0;
+                            reader.Close();
+                            async void Button1_Click(object sender, EventArgs e)
+                            {
+                                await DownloadProgAsync("x86", comboBox.Items[0].ToString().Replace("x64", "x86"), test1[0], "testing");
+                                File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Preview");
+                                NewMethod();
+                            }
+                            async void Button2_Click(object sender, EventArgs e)
+                            {
+                                await DownloadProgAsync("x86_64", comboBox.Items[0].ToString(), test1[0], "testing");
+                                File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Preview");
+                                NewMethod();
+                            }
+                            async void Button3_Click(object sender, EventArgs e)
+                            {
+                                for (int k = 0; k < comboBox.Items.Count; k++)
+                                {
+                                    comboBox.SelectedIndex = k;
+                                    if (comboBox.SelectedItem.ToString().Contains("_helppack_" + lang[combobox1.SelectedIndex, 1] + ".msi"))
+                                    {
+                                        comboBox.SelectedIndex = k;
+                                        break;
                                     }
                                 }
+                                File.AppendAllText(@"Helppack.txt", comboBox.SelectedItem.ToString() + "\n");
+                                await DownloadProgAsync("x86", comboBox.SelectedItem.ToString().Replace("x64", "x86"), test1[0], "testing");
                             }
-                            reader2.Close();
-                        }
-                        Label label = new Label
-                        {
-                            Location = new Point(10, 20 + 25 * (i - 1)),
-                            Size = new Size(200, 23),
-                            Text = labeltext,
-                            TextAlign = ContentAlignment.BottomLeft,
-                            ForeColor = Color.Black,
-                            Font = new Font("Microsoft Sans Serif", 9.25F, FontStyle.Bold, GraphicsUnit.Point, 0)
-                        };
-                        groupBox2.Controls.Add(label);
-                        Button button1 = new Button
-                        {
-                            Text = "x86",
-                            Location = new Point(label.Location.X + label.Size.Width + 20, 20 + 25 * (i - 1)),
-                            ForeColor = Color.Black,
-                            Size = new Size(50, 23)
-                        };
-                        groupBox2.Controls.Add(button1);
-                        Button button2 = new Button
-                        {
-                            Text = "x64",
-                            Location = new Point(button1.Location.X + button1.Width + 5, 20 + 25 * (i - 1)),
-                            ForeColor = Color.Black,
-                            Size = new Size(50, 23)
-                        };
-                        Button button3 = new Button
-                        {
-                            Text = "x86",
-                            Location = new Point(label.Location.X, label.Location.Y),
-                            Size = new Size(50, 23)
-                        };
-                        Button button4 = new Button
-                        {
-                            Text = "x64",
-                            Location = new Point(button3.Location.X + button3.Width + 5, label.Location.Y),
-                            Size = new Size(50, 23)
-                        };
-                        groupBox2.Controls.Add(button2);
-                        if (IntPtr.Size != 8)
-                        {
-                            button2.Enabled = false;
-                            button4.Enabled = false;
-                        }
-                        groupBox2.Padding = new Padding(5);
-                        button1.Click += new EventHandler(Button1_Click);
-                        button2.Click += new EventHandler(Button2_Click);
-                        button3.Click += new EventHandler(Button3_Click);
-                        button4.Click += new EventHandler(Button4_Click);
-                        groupBox5.Controls.Add(button3);
-                        groupBox5.Controls.Add(button4);
-                        groupBox5.Size = new Size(groupBox5.Size.Width, 25 * (test.GetLength(0) - 1));
-                        groupBox6.Location = new Point(groupBox2.Location.X, groupBox2.Location.Y + groupBox2.Size.Height + 5);
-                        groupBox4.Size = new Size(groupBox2.Size.Width + 18, groupBox3.Location.Y + groupBox3.Size.Height);
-                        groupBox4.Location = new Point(groupBox1.Location.X + groupBox1.Size.Width + 5, groupBox1.Location.Y);
-                        comboBox.SelectedIndex = 0;
-                        reader.Close();
-                        async void Button1_Click(object sender, EventArgs e)
-                        {
-                            await DownloadProgAsync("x86", comboBox.Items[0].ToString().Replace("x64", "x86"), test1[0], "testing");
-                            File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Test");
-                            NewMethod();
-                        }
-                        async void Button2_Click(object sender, EventArgs e)
-                        {
-                            await DownloadProgAsync("x86_64", comboBox.Items[0].ToString(), test1[0], "testing");
-                            File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Test");
-                            NewMethod();
-                        }
-                        async void Button3_Click(object sender, EventArgs e)
-                        {
-                            for (int k = 0; k < comboBox.Items.Count; k++)
+                            async void Button4_Click(object sender, EventArgs e)
                             {
-                                comboBox.SelectedIndex = k;
-                                if (comboBox.SelectedItem.ToString().Contains("_helppack_" + lang[combobox1.SelectedIndex, 1] + ".msi"))
+                                for (int k = 0; k < comboBox.Items.Count; k++)
                                 {
                                     comboBox.SelectedIndex = k;
-                                    break;
+                                    if (comboBox.SelectedItem.ToString().Contains("_helppack_" + lang[combobox1.SelectedIndex, 1] + ".msi"))
+                                    {
+                                        comboBox.SelectedIndex = k;
+                                        break;
+                                    }
                                 }
+                                File.AppendAllText(@"Helppack.txt", comboBox.SelectedItem.ToString() + "\n");
+                                await DownloadProgAsync("x86_64", comboBox.SelectedItem.ToString(), test1[0], "testing");
                             }
-                            File.AppendAllText(@"Helppack.txt", comboBox.SelectedItem.ToString() + "\n");
-                            await DownloadProgAsync("x86", comboBox.SelectedItem.ToString().Replace("x64", "x86"), test1[0], "testing");
+
                         }
-                        async void Button4_Click(object sender, EventArgs e)
+                        catch (WebException)
                         {
-                            for (int k = 0; k < comboBox.Items.Count; k++)
-                            {
-                                comboBox.SelectedIndex = k;
-                                if (comboBox.SelectedItem.ToString().Contains("_helppack_" + lang[combobox1.SelectedIndex, 1] + ".msi"))
-                                {
-                                    comboBox.SelectedIndex = k;
-                                    break;
-                                }
-                            }
-                            File.AppendAllText(@"Helppack.txt", comboBox.SelectedItem.ToString() + "\n");
-                            await DownloadProgAsync("x86_64", comboBox.SelectedItem.ToString(), test1[0], "testing");
+                            
                         }
                     }
                 }
@@ -201,120 +214,122 @@ namespace Portable_Libre_Office
                         groupBox1.Size = new Size(groupBox2.Size.Width + 18, groupBox3.Location.Y + groupBox3.Size.Height);
                         HttpWebRequest request2 = (HttpWebRequest)WebRequest.Create("https://download.documentfoundation.org/libreoffice/stable/" + test1[0] + "/win/x86_64/");
                         //request2.UserAgent = "LibreOffice 6.2.3.2(aecc05fe267cc68dde00352a451aa867b3b546ac; Windows; X86_64; de; )";
-                        var response2 = request2.GetResponse();
-
-                        using (StreamReader reader2 = new StreamReader(response2.GetResponseStream()))
+                        HttpWebResponse response2 = (HttpWebResponse)request2.GetResponse();
+                        if (response2.StatusCode == HttpStatusCode.OK)
                         {
-                            string[] responseFromReader2 = reader2.ReadToEnd().Split(new char[] { '\n' });
-                            for (int k = 0; k < responseFromReader2.GetLength(0); k++)
+                            using (StreamReader reader2 = new StreamReader(response2.GetResponseStream()))
                             {
-                                if (responseFromReader2[k].Contains(".msi\""))
+                                string[] responseFromReader2 = reader2.ReadToEnd().Split(new char[] { '\n' });
+                                for (int k = 0; k < responseFromReader2.GetLength(0); k++)
                                 {
-                                    comboBox.Items.AddRange(new object[] { responseFromReader2[k].Substring(responseFromReader2[k].IndexOf("<td><a href=\"", +13)).Split(new char[] { '"' }, 3)[1] });
-                                    if (responseFromReader2[k].Contains("x64.msi"))
+                                    if (responseFromReader2[k].Contains(".msi\""))
                                     {
-                                        string[] test3 = responseFromReader2[k].Substring(responseFromReader2[k].IndexOf("<td><a href=\"", +13)).Split(new char[] { '"' }, 3)[1].Split(new char[] { '_' }, 3);
-                                        labeltext = test3[0] + " " + test3[1];
+                                        comboBox.Items.AddRange(new object[] { responseFromReader2[k].Substring(responseFromReader2[k].IndexOf("<td><a href=\"", +13)).Split(new char[] { '"' }, 3)[1] });
+                                        if (responseFromReader2[k].Contains("x64.msi"))
+                                        {
+                                            string[] test3 = responseFromReader2[k].Substring(responseFromReader2[k].IndexOf("<td><a href=\"", +13)).Split(new char[] { '"' }, 3)[1].Split(new char[] { '_' }, 3);
+                                            labeltext = test3[0] + " " + test3[1];
+                                        }
                                     }
                                 }
+                                reader2.Close();
                             }
-                            reader2.Close();
-                        }
-                        Label label = new Label
-                        {
-                            Location = new Point(10, 20 + 25 * (i - 1)),
-                            Size = new Size(200, 23),
-                            Text = labeltext,
-                            TextAlign = ContentAlignment.BottomLeft,
-                            ForeColor = Color.Black,
-                            Font = new Font("Microsoft Sans Serif", 9.25F, FontStyle.Bold, GraphicsUnit.Point, 0)
-                        };
-                        groupBox3.Controls.Add(label);
-                        Button button1 = new Button
-                        {
-                            Text = "x86",
-                            Location = new Point(label.Location.X + label.Size.Width + 20, 20 + 25 * (i - 1)),
-                            ForeColor = Color.Black,
-                            Size = new Size(50, 23)
-                        };
-                        groupBox3.Controls.Add(button1);
-                        Button button2 = new Button
-                        {
-                            Text = "x64",
-                            Location = new Point(button1.Location.X + button1.Width + 5, 20 + 25 * (i - 1)),
-                            ForeColor = Color.Black,
-                            Size = new Size(50, 23)
-                        };
-                        Button button3 = new Button
-                        {
-                            Text = "x86",
-                            Location = new Point(label.Location.X, label.Location.Y),
-                            Size = new Size(50, 23)
-                        };
-                        Button button4 = new Button
-                        {
-                            Text = "x64",
-                            Location = new Point(button3.Location.X + button3.Width + 5, label.Location.Y),
-                            Size = new Size(50, 23)
-                        };
-                        groupBox3.Controls.Add(button2);
-                        groupBox3.Padding = new Padding(5);
-                        button1.Click += new EventHandler(Button1_Click);
-                        button2.Click += new EventHandler(Button2_Click);
-                        button3.Click += new EventHandler(Button3_Click);
-                        button4.Click += new EventHandler(Button4_Click);
-                        groupBox6.Controls.Add(button3);
-                        groupBox6.Controls.Add(button4);
-                        groupBox6.Size = new Size(groupBox6.Size.Width, 25 * (test.GetLength(0) - 1));
-                        groupBox6.Location = new Point(groupBox2.Location.X, groupBox2.Location.Y + groupBox2.Size.Height + 5);
-                        groupBox4.Size = new Size(groupBox6.Width + 15, groupBox1.Height);
-                        groupBox4.Location = new Point(groupBox1.Location.X + groupBox1.Size.Width + 5, groupBox1.Location.Y);
-                        comboBox.SelectedIndex = 0;
-                        reader.Close();
-                        if (IntPtr.Size != 8)
-                        {
-                            button2.Enabled = false;
-                            button4.Enabled = false;
-                        }
-                        async void Button1_Click(object sender, EventArgs e)
-                        {
-                            await DownloadProgAsync("x86", comboBox.Items[0].ToString().Replace("x64", "x86"), test1[0], "stable");
-                            File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Stable");
-                            NewMethod();
-                        }
-                        async void Button2_Click(object sender, EventArgs e)
-                        {
-                            await DownloadProgAsync("x86_64", comboBox.Items[0].ToString(), test1[0], "stable");
-                            File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Stable");
-                            NewMethod();
-                        }
-                        async void Button3_Click(object sender, EventArgs e)
-                        {
-                            for (int k = 0; k < comboBox.Items.Count; k++)
+                            Label label = new Label
                             {
-                                comboBox.SelectedIndex = k;
-                                if (comboBox.SelectedItem.ToString().Contains("_helppack_" + lang[combobox1.SelectedIndex, 1] + ".msi"))
+                                Location = new Point(10, 20 + 25 * (b++)),
+                                Size = new Size(200, 23),
+                                Text = labeltext,
+                                TextAlign = ContentAlignment.BottomLeft,
+                                ForeColor = Color.Black,
+                                Font = new Font("Microsoft Sans Serif", 9.25F, FontStyle.Bold, GraphicsUnit.Point, 0)
+                            };
+                            groupBox3.Controls.Add(label);
+                            Button button1 = new Button
+                            {
+                                Text = "x86",
+                                Location = new Point(label.Location.X + label.Size.Width + 20, 20 + 25 * (b - 1)),
+                                ForeColor = Color.Black,
+                                Size = new Size(50, 23)
+                            };
+                            groupBox3.Controls.Add(button1);
+                            Button button2 = new Button
+                            {
+                                Text = "x64",
+                                Location = new Point(button1.Location.X + button1.Width + 5, 20 + 25 * (b - 1)),
+                                ForeColor = Color.Black,
+                                Size = new Size(50, 23)
+                            };
+                            Button button3 = new Button
+                            {
+                                Text = "x86",
+                                Location = new Point(label.Location.X, label.Location.Y),
+                                Size = new Size(50, 23)
+                            };
+                            Button button4 = new Button
+                            {
+                                Text = "x64",
+                                Location = new Point(button3.Location.X + button3.Width + 5, label.Location.Y),
+                                Size = new Size(50, 23)
+                            };
+                            groupBox3.Controls.Add(button2);
+                            groupBox3.Padding = new Padding(5);
+                            button1.Click += new EventHandler(Button1_Click);
+                            button2.Click += new EventHandler(Button2_Click);
+                            button3.Click += new EventHandler(Button3_Click);
+                            button4.Click += new EventHandler(Button4_Click);
+                            groupBox6.Controls.Add(button3);
+                            groupBox6.Controls.Add(button4);
+                            groupBox6.Size = new Size(groupBox6.Size.Width, 25 * (test.GetLength(0) - 1));
+                            groupBox6.Location = new Point(groupBox2.Location.X, groupBox2.Location.Y + groupBox2.Size.Height + 5);
+                            groupBox4.Size = new Size(groupBox6.Width + 15, groupBox1.Height);
+                            groupBox4.Location = new Point(groupBox1.Location.X + groupBox1.Size.Width + 5, groupBox1.Location.Y);
+                            comboBox.SelectedIndex = 0;
+                            reader.Close();
+                            if (IntPtr.Size != 8)
+                            {
+                                button2.Enabled = false;
+                                button4.Enabled = false;
+                            }
+                            async void Button1_Click(object sender, EventArgs e)
+                            {
+                                await DownloadProgAsync("x86", comboBox.Items[0].ToString().Replace("x64", "x86"), test1[0], "stable");
+                                File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Stable");
+                                NewMethod();
+                            }
+                            async void Button2_Click(object sender, EventArgs e)
+                            {
+                                await DownloadProgAsync("x86_64", comboBox.Items[0].ToString(), test1[0], "stable");
+                                File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Stable");
+                                NewMethod();
+                            }
+                            async void Button3_Click(object sender, EventArgs e)
+                            {
+                                for (int k = 0; k < comboBox.Items.Count; k++)
                                 {
                                     comboBox.SelectedIndex = k;
-                                    break;
+                                    if (comboBox.SelectedItem.ToString().Contains("_helppack_" + lang[combobox1.SelectedIndex, 1] + ".msi"))
+                                    {
+                                        comboBox.SelectedIndex = k;
+                                        break;
+                                    }
                                 }
+                                File.AppendAllText(@"Helppack.txt", comboBox.SelectedItem.ToString() + "\n");
+                                await DownloadProgAsync("x86", comboBox.SelectedItem.ToString().Replace("x64", "x86"), test1[0], "stable");
                             }
-                            File.AppendAllText(@"Helppack.txt", comboBox.SelectedItem.ToString() + "\n");
-                            await DownloadProgAsync("x86", comboBox.SelectedItem.ToString().Replace("x64", "x86"), test1[0], "stable");
-                        }
-                        async void Button4_Click(object sender, EventArgs e)
-                        {
-                            for (int k = 0; k < comboBox.Items.Count; k++)
+                            async void Button4_Click(object sender, EventArgs e)
                             {
-                                comboBox.SelectedIndex = k;
-                                if (comboBox.SelectedItem.ToString().Contains("_helppack_" + lang[combobox1.SelectedIndex, 1] + ".msi"))
+                                for (int k = 0; k < comboBox.Items.Count; k++)
                                 {
                                     comboBox.SelectedIndex = k;
-                                    break;
+                                    if (comboBox.SelectedItem.ToString().Contains("_helppack_" + lang[combobox1.SelectedIndex, 1] + ".msi"))
+                                    {
+                                        comboBox.SelectedIndex = k;
+                                        break;
+                                    }
                                 }
+                                File.AppendAllText(@"Helppack.txt", comboBox.SelectedItem.ToString() + " - " + test1[0] + "\n");
+                                await DownloadProgAsync("x86_64", comboBox.SelectedItem.ToString(), test1[0], "stable");
                             }
-                            File.AppendAllText(@"Helppack.txt", comboBox.SelectedItem.ToString() + " - " + test1[0] + "\n");
-                            await DownloadProgAsync("x86_64", comboBox.SelectedItem.ToString(), test1[0], "stable");
                         }
                     }
                     button1.Location = new Point(groupBox4.Location.X + groupBox4.Size.Width - button1.Size.Width, groupBox4.Location.Y + groupBox4.Size.Height + 5);

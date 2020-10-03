@@ -724,26 +724,77 @@ namespace Portable_Libre_Office
             }
             if (!Directory.Exists(applicationPath + "\\Libre Office\\System64"))
             {
-                File.Copy(applicationPath + "\\Libre Office\\System\\msvcp140.dll", applicationPath + "\\Libre Office\\program\\msvcp140.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System\\vccorlib140.dll", applicationPath + "\\Libre Office\\program\\vccorlib140.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System\\vcruntime140.dll", applicationPath + "\\Libre Office\\program\\vcruntime140.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System\\msvcp140_1.dll", applicationPath + "\\Libre Office\\program\\msvcp140_1.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System\\msvcp140_2.dll", applicationPath + "\\Libre Office\\program\\msvcp140_2.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System\\msvcp140_codecvt_ids.dll", applicationPath + "\\Libre Office\\program\\msvcp140_codecvt_ids.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System\\ucrtbase.dll", applicationPath + "\\Libre Office\\program\\ucrtbase.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System\\concrt140.dll", applicationPath + "\\Libre Office\\program\\concrt140.dll", true);
+                if (File.Exists(applicationPath + "\\Libre Office\\System\\msvcp140.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System\\msvcp140.dll", applicationPath + "\\Libre Office\\program\\msvcp140.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System\\vccorlib140.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System\\vccorlib140.dll", applicationPath + "\\Libre Office\\program\\vccorlib140.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System\\vcruntime140.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System\\vcruntime140.dll", applicationPath + "\\Libre Office\\program\\vcruntime140.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System\\msvcp140_1.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System\\msvcp140_1.dll", applicationPath + "\\Libre Office\\program\\msvcp140_1.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System\\msvcp140_2.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System\\msvcp140_2.dll", applicationPath + "\\Libre Office\\program\\msvcp140_2.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System\\msvcp140_codecvt_ids.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System\\msvcp140_codecvt_ids.dll", applicationPath + "\\Libre Office\\program\\msvcp140_codecvt_ids.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System\\ucrtbase.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System\\ucrtbase.dll", applicationPath + "\\Libre Office\\program\\ucrtbase.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System\\concrt140.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System\\concrt140.dll", applicationPath + "\\Libre Office\\program\\concrt140.dll", true);
+                }
             }
             else if (Directory.Exists(applicationPath + "\\Libre Office\\System64"))
             {
-                File.Copy(applicationPath + "\\Libre Office\\System64\\msvcp140.dll", applicationPath + "\\Libre Office\\program\\msvcp140.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System64\\vccorlib140.dll", applicationPath + "\\Libre Office\\program\\vccorlib140.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System64\\vcruntime140.dll", applicationPath + "\\Libre Office\\program\\vcruntime140.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System64\\msvcp140_1.dll", applicationPath + "\\Libre Office\\program\\msvcp140_1.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System64\\msvcp140_2.dll", applicationPath + "\\Libre Office\\program\\msvcp140_2.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System64\\msvcp140_codecvt_ids.dll", applicationPath + "\\Libre Office\\program\\msvcp140_codecvt_ids.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System64\\ucrtbase.dll", applicationPath + "\\Libre Office\\program\\ucrtbase.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System64\\concrt140.dll", applicationPath + "\\Libre Office\\program\\concrt140.dll", true);
-                File.Copy(applicationPath + "\\Libre Office\\System64\\vcruntime140_1.dll", applicationPath + "\\Libre Office\\program\\vcruntime140_1.dll", true);
+                if (File.Exists(applicationPath + "\\Libre Office\\System64\\msvcp140.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System64\\msvcp140.dll", applicationPath + "\\Libre Office\\program\\msvcp140.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System64\\vccorlib140.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System64\\vccorlib140.dll", applicationPath + "\\Libre Office\\program\\vccorlib140.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System64\\vcruntime140.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System64\\vcruntime140.dll", applicationPath + "\\Libre Office\\program\\vcruntime140.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System64\\msvcp140_1.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System64\\msvcp140_1.dll", applicationPath + "\\Libre Office\\program\\msvcp140_1.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System64\\msvcp140_2.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System64\\msvcp140_2.dll", applicationPath + "\\Libre Office\\program\\msvcp140_2.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System64\\msvcp140_codecvt_ids.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System64\\msvcp140_codecvt_ids.dll", applicationPath + "\\Libre Office\\program\\msvcp140_codecvt_ids.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System64\\ucrtbase.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System64\\ucrtbase.dll", applicationPath + "\\Libre Office\\program\\ucrtbase.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System64\\concrt140.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System64\\concrt140.dll", applicationPath + "\\Libre Office\\program\\concrt140.dll", true);
+                }
+                if (File.Exists(applicationPath + "\\Libre Office\\System64\\vcruntime140_1.dll"))
+                {
+                    File.Copy(applicationPath + "\\Libre Office\\System64\\vcruntime140_1.dll", applicationPath + "\\Libre Office\\program\\vcruntime140_1.dll", true);
+                }
             }
             foreach (string line in File.ReadLines(@"Setup.cfg"))
             {
