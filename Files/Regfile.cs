@@ -358,6 +358,7 @@ namespace Portable_Libre_Office.Files
             key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey("SOFTWARE\\RegisteredApplications");
             key.SetValue("LibreOffice.PORTABLE", @"SOFTWARE\LibreOffice.PORTABLE\Capabilities");
             key.Close();
+            IconReset();
         }
         private static void Method1(string applicationPath, string progName)
         {
@@ -524,12 +525,21 @@ namespace Portable_Libre_Office.Files
                 key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\\RegisteredApplications", true);
                 key.DeleteValue("LibreOffice.PORTABLE", false);
                 key.Close();
+                IconReset();
             }
             catch (Exception ex)
             {
                 File.AppendAllText(applicationPath + "\\Message.txt", ex.TargetSite + "\n");
                 MessageBox.Show(ex.Message);
             }
+        }
+        private static void IconReset()
+        {
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            process.StartInfo.FileName = "ie4uinit.exe";
+            process.StartInfo.Arguments = " -show";
+            process.Start();
+            process.WaitForExit();
         }
     }
 }

@@ -931,5 +931,35 @@ namespace Portable_Libre_Office
                 Files.Registrymodifications.CreateRegistrymodification_XCU(applicationPath);
             }
         }
+
+        private void UserChoice_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            File.AppendAllText(@"Setup.cfg", "[Dictionaries]" + Environment.NewLine);
+            for (int i = 0; i < checkedListBox1.Items.Count; i++)
+            {
+                File.AppendAllText(@"Setup.cfg", "D-" + checkedListBox1.GetItemText(i) + "-" + Convert.ToString(checkedListBox1.Items[i]) + "=" + Convert.ToInt32(checkedListBox1.GetItemCheckState(i)) + Environment.NewLine);
+            }
+            File.AppendAllText(@"Setup.cfg", Environment.NewLine);
+            File.AppendAllText(@"Setup.cfg", "[Extras]" + Environment.NewLine);
+            for (int i = 0; i < checkedListBox3.Items.Count; i++)
+            {
+                File.AppendAllText(@"Setup.cfg", "E-" + checkedListBox3.GetItemText(i) + "-" + Convert.ToString(checkedListBox3.Items[i]) + "=" + Convert.ToInt32(checkedListBox3.GetItemCheckState(i)) + Environment.NewLine);
+            }
+            File.AppendAllText(@"Setup.cfg", Environment.NewLine);
+            File.AppendAllText(@"Setup.cfg", "[Extensions]" + Environment.NewLine);
+            for (int i = 0; i < checkedListBox2.Items.Count; i++)
+            {
+                File.AppendAllText(@"Setup.cfg", "Ext-" + checkedListBox2.GetItemText(i) + "-" + Convert.ToString(checkedListBox2.Items[i]) + "=" + Convert.ToInt32(checkedListBox2.GetItemCheckState(i)) + Environment.NewLine);
+            }
+            File.AppendAllText(@"Setup.cfg", Environment.NewLine);
+            File.AppendAllText(@"Setup.cfg", "[User interface languages]" + Environment.NewLine);
+            for (int i = 0; i < checkedListBox4.Items.Count; i++)
+            {
+                File.AppendAllText(@"Setup.cfg", "UI-" + checkedListBox4.GetItemText(i) + "-" + Convert.ToString(checkedListBox4.Items[i]) + "=" + Convert.ToInt32(checkedListBox4.GetItemCheckState(i)) + Environment.NewLine);
+            }
+            File.AppendAllText(@"Setup.cfg", Environment.NewLine);
+            File.AppendAllText(@"Setup.cfg", "[HolgisInsaneMode]" + Environment.NewLine);
+            File.AppendAllText(@"Setup.cfg", "HolgiMode" + "=" + Convert.ToInt32(checkBox1.Checked) + Environment.NewLine);
+        }
     }
 }
