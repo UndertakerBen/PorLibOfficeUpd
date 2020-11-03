@@ -93,7 +93,7 @@ namespace Portable_Libre_Office
                             Label label = new Label
                             {
                                 Location = new Point(10, 20 + 25 * (a++)),
-                                Size = new Size(200, 23),
+                                Size = new Size(260, 23),
                                 Text = labeltext,
                                 TextAlign = ContentAlignment.BottomLeft,
                                 ForeColor = Color.Black,
@@ -237,7 +237,7 @@ namespace Portable_Libre_Office
                             Label label = new Label
                             {
                                 Location = new Point(10, 20 + 25 * (b++)),
-                                Size = new Size(200, 23),
+                                Size = new Size(260, 23),
                                 Text = labeltext,
                                 TextAlign = ContentAlignment.BottomLeft,
                                 ForeColor = Color.Black,

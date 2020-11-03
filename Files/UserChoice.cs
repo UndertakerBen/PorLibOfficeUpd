@@ -827,7 +827,15 @@ namespace Portable_Libre_Office
                                 Directory.Delete(applicationPath + "\\Libre Office\\" + dirDel[i], true);
                             }
                         }
-                        string[] dirDel2 = new string[5] { "opencl", "opengl", "python-core-3.7.7", "wizards", "resource\\common" };
+                        string[] testc = Directory.GetDirectories(applicationPath + "\\Libre Office\\program");
+                        foreach (string i in testc)
+                        {
+                            if (i.Contains("python-core-"))
+                            {
+                                Directory.Delete(i, true);
+                            }
+                        }
+                        string[] dirDel2 = new string[4] { "opencl", "opengl", "wizards", "resource\\common" };
                         for (int i = 0; i < dirDel2.Length; i++)
                         {
                             if (Directory.Exists(applicationPath + "\\Libre Office\\program\\" + dirDel2[i]))
@@ -907,9 +915,12 @@ namespace Portable_Libre_Office
                                 File.Delete(applicationPath + "\\Libre Office\\" + fileDel5[i]);
                             }
                         }
-                        if (Directory.GetFiles(applicationPath + "\\Libre Office\\program\\classes").Length == 0)
+                        if (Directory.Exists(applicationPath + "\\Libre Office\\program\\classes"))
                         {
-                            Directory.Delete(applicationPath + "\\Libre Office\\program\\classes", true);
+                            if (Directory.GetFiles(applicationPath + "\\Libre Office\\program\\classes").Length == 0)
+                            {
+                                Directory.Delete(applicationPath + "\\Libre Office\\program\\classes", true);
+                            }
                         }
                     }
                 }
