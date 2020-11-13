@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Principal;
 using System.Threading;
@@ -25,9 +26,40 @@ namespace Portable_Libre_Office
         string branch = "";
         private readonly int a;
         private readonly int b;
+        
         public Form1()
         {
             InitializeComponent();
+            checkBox1 = new CheckBox
+            {
+                AutoSize = true,
+                Location = new Point(8, 206),
+                Name = "checkBox1",
+                Size = new Size(213, 17),
+                TabIndex = 8,
+                Text = "Delete downloaded files after updateing",
+                UseVisualStyleBackColor = true
+            };
+            checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
+            Controls.Add(checkBox1);
+            if (File.Exists(applicationPath + "\\Setup.cfg"))
+            {
+                foreach (string line in File.ReadLines(@"Setup.cfg"))
+                {
+                    if (line.Contains("DeleteFiles"))
+                    {
+                        string[] linesplitt = line.Split(new char[] { '=' }, 2);
+                        if (Convert.ToInt32(linesplitt[1]) == 1)
+                        {
+                            checkBox1.Checked = true;
+                        }
+                    }
+                    else
+                    {
+                        checkBox1.Checked = false;
+                    }
+                }
+            }
             ComboBox combobox1 = new ComboBox
             {
                 Size = new Size(125, 18),
@@ -332,9 +364,11 @@ namespace Portable_Libre_Office
                             }
                         }
                     }
+                    checkBox1.Location = new Point(groupBox1.Location.X + 5, groupBox1.Location.Y + groupBox1.Size.Height + 10);
                     button1.Location = new Point(groupBox4.Location.X + groupBox4.Size.Width - button1.Size.Width, groupBox4.Location.Y + groupBox4.Size.Height + 5);
-                    label1.Location = new Point(groupBox1.Location.X, groupBox1.Location.Y + groupBox1.Size.Height + 10);
-                    button3.Location = new Point(label1.Location.X + label1.Size.Width + 5, button1.Location.Y);
+                    label1.Location = new Point(checkBox1.Location.X, checkBox1.Location.Y + checkBox1.Size.Height + 10);
+                    button3.Location = new Point(label1.Location.X + label1.Size.Width + 5, label1.Location.Y - 5);
+                    button1.Location = new Point(groupBox4.Location.X + groupBox4.Size.Width - button1.Size.Width, button3.Location.Y);
                     combobox1.Location = new Point(groupBox4.Width - groupBox4.Width + 8, groupBox4.Height - groupBox4.Height + 16);
                     groupBox4.Controls.Add(combobox1);
                     combobox1.BringToFront();
@@ -359,6 +393,7 @@ namespace Portable_Libre_Office
                 button3.Visible = true;
                 label1.Visible = true;
             }
+            CheckUpdate();
         }
         private async Task DownloadProgAsync(string arch, string filename, string version, string ring)
         {
@@ -466,7 +501,6 @@ namespace Portable_Libre_Office
                 {
                     MessageBox.Show(ex.Message);
                 }
-                
                 string arguments = " /a \"" + filename + "\" /qb Targetdir=\"" + applicationPath + "\\Libre Office\"";
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec";
@@ -507,6 +541,13 @@ namespace Portable_Libre_Office
                         }
                     }
                 }
+                if (checkBox1.Checked)
+                {
+                    if (File.Exists(applicationPath + "\\" + filename))
+                    {
+                        File.Delete(applicationPath + "\\" + filename);
+                    }
+                }
                 await Task.WhenAll();
             }
             else if (filename.Contains("helppack"))
@@ -520,6 +561,13 @@ namespace Portable_Libre_Office
                 if (File.Exists(applicationPath + "\\Libre Office\\" + filename))
                 {
                     File.Delete(applicationPath + "\\Libre Office\\" + filename);
+                }
+                if (checkBox1.Checked)
+                {
+                    if (File.Exists(applicationPath + "\\" + filename))
+                    {
+                        File.Delete(applicationPath + "\\" + filename);
+                    }
                 }
             }
         }
@@ -701,6 +749,175 @@ namespace Portable_Libre_Office
                 groupBox1.Text = "Libre Office - Installed: " + branch + " " + FileVersionInfo.GetVersionInfo(applicationPath + "\\Libre Office\\program\\soffice.exe").FileVersion;
                 filestream.Close();
                 Refresh();
+            }
+        }
+
+        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (File.Exists(applicationPath + "\\Setup.cfg"))
+            {
+                try
+                {
+                    string[] delFiles = File.ReadAllLines(applicationPath + "\\Setup.cfg");
+                    for (int i = 0; i < delFiles.Length; i++)
+                    {
+                        if (delFiles[i].Contains("DeleteFiles="))
+                        {
+                            delFiles[i] = "DeleteFiles=" + Convert.ToInt32(checkBox1.Checked);
+                            File.WriteAllLines(applicationPath + "\\Setup.cfg", delFiles);
+                        }
+                    }
+                    if (!delFiles.Contains("DeleteFiles=") & !delFiles.Contains("DeleteDownloadedFiles"))
+                    {
+                        File.AppendAllText(applicationPath + "\\Setup.cfg", Environment.NewLine);
+                        File.AppendAllText(applicationPath + "\\Setup.cfg", "[DeleteDownloadedFiles]" + Environment.NewLine);
+                        File.AppendAllText(applicationPath + "\\Setup.cfg", "DeleteFiles" + "=" + Convert.ToInt32(Form1.checkBox1.Checked) + Environment.NewLine);
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+        }
+        private void CheckUpdate()
+        {
+            GroupBox groupBoxupdate = new GroupBox
+            {
+                Location = new Point(groupBox1.Location.X, button1.Location.Y + button1.Size.Height + 5),
+                Size = new Size(groupBox1.Width + 5 + groupBox4.Width, 90),
+                BackColor = Color.Aqua
+            };
+            Label versionLabel = new Label
+            {
+                AutoSize = false,
+                TextAlign = ContentAlignment.BottomCenter,
+                Dock = DockStyle.None,
+                Location = new Point(2, 30),
+                Size = new Size(groupBoxupdate.Width - 4, 25)
+            };
+            versionLabel.Font = new Font(versionLabel.Font.Name, 10F, FontStyle.Bold);
+            Label infoLabel = new Label
+            {
+                AutoSize = false,
+                TextAlign = ContentAlignment.BottomCenter,
+                Dock = DockStyle.None,
+                Location = new Point(2, 10),
+                Size = new Size(groupBoxupdate.Width - 4, 20),
+                Text = "A new version is available"
+            };
+            infoLabel.Font = new Font(infoLabel.Font.Name, 9.25F);
+            Label downLabel = new Label
+            {
+                TextAlign = ContentAlignment.MiddleRight,
+                AutoSize = false,
+                Size = new Size(100, 23),
+                Text = "Update now"
+            };
+            Button laterButton = new Button
+            {
+                Size = new Size(40, 23),
+                BackColor = Color.FromArgb(224, 224, 224),
+                Text = "No"
+            };
+            Button updateButton = new Button
+            {
+                Location = new Point(groupBoxupdate.Width - Width - 10, 60),
+                Size = new Size(40, 23),
+                BackColor = Color.FromArgb(224, 224, 224),
+                Text = "Yes"
+            };
+            updateButton.Location = new Point(groupBoxupdate.Width - updateButton.Width - 10, 60);
+            laterButton.Location = new Point(updateButton.Location.X - laterButton.Width - 5, 60);
+            downLabel.Location = new Point(laterButton.Location.X - downLabel.Width - 20, 60);
+            groupBoxupdate.Controls.Add(updateButton);
+            groupBoxupdate.Controls.Add(laterButton);
+            groupBoxupdate.Controls.Add(downLabel);
+            groupBoxupdate.Controls.Add(infoLabel);
+            groupBoxupdate.Controls.Add(versionLabel);
+            updateButton.Click += new EventHandler(UpdateButton_Click);
+            laterButton.Click += new EventHandler(LaterButton_Click);
+            void LaterButton_Click(object sender, EventArgs e)
+            {
+                groupBoxupdate.Dispose();
+                Controls.Remove(groupBoxupdate);
+                groupBox1.Enabled = true;
+                groupBox4.Enabled = true;
+            }
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            try
+            {
+                var request = WebRequest.Create("https://github.com/UndertakerBen/PorLibOfficeUpd/raw/main/Version.txt");
+                var response = request.GetResponse();
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                {
+                    var version = reader.ReadToEnd();
+                    FileVersionInfo testm = FileVersionInfo.GetVersionInfo(applicationPath + "\\Portable Libre Office Updater.exe");
+                    versionLabel.Text = testm.FileVersion + "  >>> " + version;
+                    if (Convert.ToInt32(version.Replace(".", "")) > Convert.ToInt32(testm.FileVersion.Replace(".", "")))
+                    {
+                        Controls.Add(groupBoxupdate);
+                        groupBox1.Enabled = false;
+                        groupBox4.Enabled = false;
+                    }
+                    reader.Close();
+                }
+            }
+            catch (Exception)
+            {
+                
+            }
+            void UpdateButton_Click(object sender, EventArgs e)
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                var request2 = WebRequest.Create("https://github.com/UndertakerBen/PorLibOfficeUpd/raw/main/Version.txt");
+                var response2 = request2.GetResponse();
+                using (StreamReader reader = new StreamReader(response2.GetResponseStream()))
+                {
+                    var version = reader.ReadToEnd();
+                    reader.Close();
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                    using (WebClient myWebClient2 = new WebClient())
+                    {
+                        myWebClient2.DownloadFile($"https://github.com/UndertakerBen/PorLibOfficeUpd/releases/download/v{version}/Portable.LibreOffice.Updater.v{version}.zip", @"Portable.LibreOffice.Updater.v" + version + ".zip");
+                    }
+                    System.IO.Compression.ZipFile.ExtractToDirectory(applicationPath + "\\Portable.LibreOffice.Updater.v" + version + ".zip", applicationPath + "\\Temp");
+                    var files = Directory.GetFiles(applicationPath + "\\Bin");
+                    foreach (string file in files)
+                    {
+                        if (File.Exists(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file)) & File.Exists(applicationPath + "\\Bin\\" + Path.GetFileName(file)))
+                        {
+                            FileVersionInfo binLauncher = FileVersionInfo.GetVersionInfo(applicationPath + "\\Bin\\" + Path.GetFileName(file));
+                            FileVersionInfo tempLauncher = FileVersionInfo.GetVersionInfo(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file));
+                            if (Convert.ToInt32(tempLauncher.FileVersion.Replace(".", "")) > Convert.ToInt32(binLauncher.FileVersion.Replace(".", "")))
+                            {
+                                File.Copy(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file), applicationPath + "\\Bin\\" + Path.GetFileName(file), true);
+                                if (File.Exists(applicationPath + "\\" + Path.GetFileName(file)))
+                                {
+                                    FileVersionInfo istLauncher = FileVersionInfo.GetVersionInfo(applicationPath + "\\" + Path.GetFileName(file));
+                                    if (Convert.ToInt32(tempLauncher.FileVersion.Replace(".", "")) > Convert.ToInt32(istLauncher.FileVersion.Replace(".", "")))
+                                    {
+                                        File.Copy(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file), applicationPath + "\\" + Path.GetFileName(file), true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    File.AppendAllText(@"Update.cmd", "@echo off" + "\n" +
+                        "timeout /t 1 /nobreak" + "\n" +
+                        "copy /Y \"" + applicationPath + "\\Temp\\Portable Libre Office Updater.exe\" " + "\"" + applicationPath + "\\Portable Libre Office Updater.exe\"\n" +
+                        "call cmd /c Start /b \"\" " + "\"" + applicationPath + "\\Portable Libre Office Updater.exe\"\n" +
+                        "rd /s /q \"" + applicationPath + "\\Temp\"\n" +
+                        "del /f /q \"" + applicationPath + "\\Update.cmd\" && exit\n" +
+                        "exit\n");
+                    File.Delete(applicationPath + "\\Portable.LibreOffice.Updater.v" + version + ".zip");
+                    string arguments = " /c call Update.cmd";
+                    Process process = new Process();
+                    process.StartInfo.FileName = "cmd.exe";
+                    process.StartInfo.Arguments = arguments;
+                    process.Start();
+                    Close();
+                }
             }
         }
     }
