@@ -37,7 +37,7 @@ namespace Portable_Libre_Office
                 Name = "checkBox1",
                 Size = new Size(213, 17),
                 TabIndex = 8,
-                Text = "Delete downloaded files after updateing",
+                Text = "Delete downloaded files after updating",
                 UseVisualStyleBackColor = true
             };
             checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
