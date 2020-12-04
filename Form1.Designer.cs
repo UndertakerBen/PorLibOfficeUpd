@@ -49,6 +49,7 @@
             this.onTheDesktopToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.inTheStartmenuToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.removeAllShortcutsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -165,7 +166,8 @@
             this.menuStrip1.Enabled = false;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.extrasToolStripMenuItem,
-            this.createAShortcutOnTheDesktopToolStripMenuItem});
+            this.createAShortcutOnTheDesktopToolStripMenuItem,
+            this.infoToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(5, 5);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(913, 24);
@@ -261,6 +263,15 @@
             this.removeAllShortcutsToolStripMenuItem.Text = "Remove all shortcuts";
             this.removeAllShortcutsToolStripMenuItem.Click += new System.EventHandler(this.RemoveAllShortcutsToolStripMenuItem_Click);
             // 
+            // infoToolStripMenuItem
+            // 
+            this.infoToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.infoToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.infoToolStripMenuItem.Name = "infoToolStripMenuItem";
+            this.infoToolStripMenuItem.Size = new System.Drawing.Size(86, 20);
+            this.infoToolStripMenuItem.Text = "Version Info";
+            this.infoToolStripMenuItem.Click += new System.EventHandler(this.InfoToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -313,6 +324,7 @@
         private System.Windows.Forms.ToolStripMenuItem onTheDesktopToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem inTheStartmenuToolStripMenuItem1;
         public static System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.ToolStripMenuItem infoToolStripMenuItem;
     }
 }
 

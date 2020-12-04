@@ -29,7 +29,9 @@ namespace Portable_Libre_Office
         
         public Form1()
         {
+            FileVersionInfo updVersion = FileVersionInfo.GetVersionInfo(applicationPath + "\\Portable Libre Office Updater.exe");
             InitializeComponent();
+            Text = Text + " - v" + updVersion.FileVersion;
             checkBox1 = new CheckBox
             {
                 AutoSize = true,
@@ -539,6 +541,14 @@ namespace Portable_Libre_Office
                         {
                             File.Delete(startMenu + "\\LibreOffice Portable\\Libre " + progName[i] + " Portable Launcher.lnk");
                         }
+                        if (File.Exists(deskDir + "\\Libre " + progName[i] + " Portable.lnk"))
+                        {
+                            File.Delete(deskDir + "\\Libre " + progName[i] + " Portable.lnk");
+                        }
+                        if (File.Exists(startMenu + "\\LibreOffice Portable\\Libre " + progName[i] + " Portable.lnk"))
+                        {
+                            File.Delete(startMenu + "\\LibreOffice Portable\\Libre " + progName[i] + " Portable.lnk");
+                        }
                     }
                 }
                 if (checkBox1.Checked)
@@ -622,7 +632,7 @@ namespace Portable_Libre_Office
                 if (File.Exists(applicationPath + "\\Libre Office\\program\\s" + progName[i].ToLower() + ".exe"))
                 {
                     IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
-                    IWshRuntimeLibrary.IWshShortcut link = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(deskDir + "\\Libre " + progName[i] + " Portable Launcher.lnk");
+                    IWshRuntimeLibrary.IWshShortcut link = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(deskDir + "\\Libre " + progName[i] + " Portable.lnk");
                     link.IconLocation = applicationPath + "\\Libre Office\\program\\s" + progName[i].ToLower() + ".exe,0";
                     link.WorkingDirectory = applicationPath;
                     link.TargetPath = applicationPath + "\\Libre " + progName[i] + " Portable Launcher.exe";
@@ -664,7 +674,7 @@ namespace Portable_Libre_Office
                         Directory.CreateDirectory(startMenu + "\\LibreOffice Portable");
                     }
                     IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
-                    IWshRuntimeLibrary.IWshShortcut link = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(startMenu + "\\LibreOffice Portable\\Libre " + progName[i] + " Portable Launcher.lnk");
+                    IWshRuntimeLibrary.IWshShortcut link = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(startMenu + "\\LibreOffice Portable\\Libre " + progName[i] + " Portable.lnk");
                     link.IconLocation = applicationPath + "\\Libre Office\\program\\s" + progName[i].ToLower() + ".exe,0";
                     link.WorkingDirectory = applicationPath;
                     link.TargetPath = applicationPath + "\\Libre " + progName[i] + " Portable Launcher.exe";
@@ -676,11 +686,19 @@ namespace Portable_Libre_Office
         {
             for (int i = 0; i < progName.GetLength(0); i++)
             {
-                if (File.Exists(startMenu + "\\LibreOffice Portable\\Libre " + progName[i] + " Portable Launcher.lnk"))
+                if (File.Exists(startMenu + "\\LibreOffice Portable\\Libre " + progName[i] + " Portable.lnk"))
+                {
+                    File.Delete(startMenu + "\\LibreOffice Portable\\Libre " + progName[i] + " Portable.lnk");
+                }
+                else if (File.Exists(startMenu + "\\LibreOffice Portable\\Libre " + progName[i] + " Portable Launcher.lnk"))
                 {
                     File.Delete(startMenu + "\\LibreOffice Portable\\Libre " + progName[i] + " Portable Launcher.lnk");
                 }
-                if (File.Exists(deskDir + "\\Libre " + progName[i] + " Portable Launcher.lnk"))
+                if (File.Exists(deskDir + "\\Libre " + progName[i] + " Portable.lnk"))
+                {
+                    File.Delete(deskDir + "\\Libre " + progName[i] + " Portable.lnk");
+                }
+                else if (File.Exists(deskDir + "\\Libre " + progName[i] + " Portable Launcher.lnk"))
                 {
                     File.Delete(deskDir + "\\Libre " + progName[i] + " Portable Launcher.lnk");
                 }
@@ -919,6 +937,13 @@ namespace Portable_Libre_Office
                     Close();
                 }
             }
+        }
+
+        private void InfoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FileVersionInfo updVersion = FileVersionInfo.GetVersionInfo(applicationPath + "\\Portable Libre Office Updater.exe");
+            FileVersionInfo launcherVersion = FileVersionInfo.GetVersionInfo(applicationPath + "\\Bin\\Libre Office Portable Launcher.exe");
+            MessageBox.Show("Updater Version - " + updVersion.FileVersion + "\nLauncher Version - " + launcherVersion.FileVersion, "Version Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
