@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -23,10 +24,17 @@ namespace Portable_Libre_Office
         private static readonly string[] progName = new string[7] { "Base", "Calc", "Draw", "Impress", "Math", "Office", "Writer" };
         private readonly string deskDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
         private readonly string startMenu = Environment.GetFolderPath(Environment.SpecialFolder.Programs);
-        string branch = "";
+        private string branch = "";
         private readonly int a;
         private readonly int b;
-        
+        private readonly ArrayList preFold = new ArrayList();
+        private readonly ArrayList preVer = new ArrayList();
+        private readonly ArrayList preFile = new ArrayList();
+        private readonly ArrayList stabFold = new ArrayList();
+        private readonly ArrayList stabVer = new ArrayList();
+        private readonly ArrayList stabFile = new ArrayList();
+        private readonly string[] CommandLineArgs = Environment.GetCommandLineArgs();
+
         public Form1()
         {
             FileVersionInfo updVersion = FileVersionInfo.GetVersionInfo(applicationPath + "\\Portable Libre Office Updater.exe");
@@ -46,7 +54,7 @@ namespace Portable_Libre_Office
             Controls.Add(checkBox1);
             if (File.Exists(applicationPath + "\\Setup.cfg"))
             {
-                foreach (string line in File.ReadLines(@"Setup.cfg"))
+                foreach (string line in File.ReadLines(applicationPath + "\\Setup.cfg"))
                 {
                     if (line.Contains("DeleteFiles"))
                     {
@@ -114,12 +122,18 @@ namespace Portable_Libre_Office
                                         if (responseFromReader2[k].Contains(".msi\""))
                                         {
                                             comboBox.Items.AddRange(new object[] { responseFromReader2[k].Substring(responseFromReader2[k].IndexOf("<td><a href=\"", +13)).Split(new char[] { '"' }, 3)[1] });
-                                            if (responseFromReader2[k].Contains("x64.msi"))
+                                            if (responseFromReader2[k].Contains("64.msi"))
                                             {
                                                 string[] test3 = responseFromReader2[k].Substring(responseFromReader2[k].IndexOf("<td><a href=\"", +13)).Split(new char[] { '"' }, 3)[1].Split(new char[] { '_' }, 3);
                                                 labeltext = $"{test3[0]} {test3[1]}";
+                                                preVer.Add(test3[1]);
+                                                preFold.Add(test1[0]);
                                             }
                                         }
+                                    }
+                                    for (int j = 0; j < comboBox.Items.Count; j++)
+                                    {
+                                        preFile.Add(comboBox.Items[j].ToString());
                                     }
                                     reader2.Close();
                                 }
@@ -182,12 +196,14 @@ namespace Portable_Libre_Office
                             reader.Close();
                             async void Button1_Click(object sender, EventArgs e)
                             {
-                                await DownloadProgAsync("x86", comboBox.Items[0].ToString().Replace("x64", "x86"), test1[0], "testing");
+                                branch = "Preview";
+                                await DownloadProgAsync("x86", comboBox.Items[0].ToString().Replace("-64", ""), test1[0], "testing");
                                 File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Preview");
                                 NewMethod();
                             }
                             async void Button2_Click(object sender, EventArgs e)
                             {
+                                branch = "Preview";
                                 await DownloadProgAsync("x86_64", comboBox.Items[0].ToString(), test1[0], "testing");
                                 File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Preview");
                                 NewMethod();
@@ -203,8 +219,7 @@ namespace Portable_Libre_Office
                                         break;
                                     }
                                 }
-                                File.AppendAllText(@"Helppack.txt", comboBox.SelectedItem.ToString() + "\n");
-                                await DownloadProgAsync("x86", comboBox.SelectedItem.ToString().Replace("x64", "x86"), test1[0], "testing");
+                                await DownloadProgAsync("x86", comboBox.SelectedItem.ToString().Replace("-64", ""), test1[0], "testing");
                             }
                             async void Button4_Click(object sender, EventArgs e)
                             {
@@ -217,7 +232,6 @@ namespace Portable_Libre_Office
                                         break;
                                     }
                                 }
-                                File.AppendAllText(@"Helppack.txt", comboBox.SelectedItem.ToString() + "\n");
                                 await DownloadProgAsync("x86_64", comboBox.SelectedItem.ToString(), test1[0], "testing");
                             }
 
@@ -259,12 +273,18 @@ namespace Portable_Libre_Office
                                     if (responseFromReader2[k].Contains(".msi\""))
                                     {
                                         comboBox.Items.AddRange(new object[] { responseFromReader2[k].Substring(responseFromReader2[k].IndexOf("<td><a href=\"", +13)).Split(new char[] { '"' }, 3)[1] });
-                                        if (responseFromReader2[k].Contains("x64.msi"))
+                                        if (responseFromReader2[k].Contains("64.msi"))
                                         {
                                             string[] test3 = responseFromReader2[k].Substring(responseFromReader2[k].IndexOf("<td><a href=\"", +13)).Split(new char[] { '"' }, 3)[1].Split(new char[] { '_' }, 3);
                                             labeltext = test3[0] + " " + test3[1];
+                                            stabVer.Add(test3[1]);
+                                            stabFold.Add(test1[0]);
                                         }
                                     }
+                                }
+                                for (int j = 0; j < comboBox.Items.Count; j++)
+                                {
+                                    stabFile.Add(comboBox.Items[j].ToString());
                                 }
                                 reader2.Close();
                             }
@@ -326,12 +346,14 @@ namespace Portable_Libre_Office
                             }
                             async void Button1_Click(object sender, EventArgs e)
                             {
-                                await DownloadProgAsync("x86", comboBox.Items[0].ToString().Replace("x64", "x86"), test1[0], "stable");
+                                branch = "Stable";
+                                await DownloadProgAsync("x86", comboBox.Items[0].ToString().Replace("-64", ""), test1[0], "stable");
                                 File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Stable");
                                 NewMethod();
                             }
                             async void Button2_Click(object sender, EventArgs e)
                             {
+                                branch = "Stable";
                                 await DownloadProgAsync("x86_64", comboBox.Items[0].ToString(), test1[0], "stable");
                                 File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Stable");
                                 NewMethod();
@@ -347,8 +369,7 @@ namespace Portable_Libre_Office
                                         break;
                                     }
                                 }
-                                File.AppendAllText(@"Helppack.txt", comboBox.SelectedItem.ToString() + "\n");
-                                await DownloadProgAsync("x86", comboBox.SelectedItem.ToString().Replace("x64", "x86"), test1[0], "stable");
+                                await DownloadProgAsync("x86", comboBox.SelectedItem.ToString().Replace("-64", ""), test1[0], "stable");
                             }
                             async void Button4_Click(object sender, EventArgs e)
                             {
@@ -361,7 +382,6 @@ namespace Portable_Libre_Office
                                         break;
                                     }
                                 }
-                                File.AppendAllText(@"Helppack.txt", comboBox.SelectedItem.ToString() + " - " + test1[0] + "\n");
                                 await DownloadProgAsync("x86_64", comboBox.SelectedItem.ToString(), test1[0], "stable");
                             }
                         }
@@ -386,7 +406,12 @@ namespace Portable_Libre_Office
             }
             if (File.Exists(applicationPath + "\\Libre Office\\program\\soffice.exe"))
             {
-                CheckIsFile64bit(File.OpenRead(applicationPath + "\\Libre Office\\program\\soffice.exe"));
+                if (File.Exists(applicationPath + "\\UserData\\Branch.log"))
+                {
+                    branch = File.ReadAllText(applicationPath + "\\UserData\\Branch.log");
+                }
+                string archi = GetArchBack.CheckIsFile64bit(File.OpenRead(applicationPath + "\\Libre Office\\program\\soffice.exe"));
+                groupBox1.Text = "Libre Office - Installed: " + branch + " " + FileVersionInfo.GetVersionInfo(applicationPath + "\\Libre Office\\program\\soffice.exe").FileVersion + " " + archi;
                 groupBox1.ForeColor = SystemColors.HotTrack;
                 menuStrip1.Enabled = true;
             }
@@ -395,7 +420,142 @@ namespace Portable_Libre_Office
                 button3.Visible = true;
                 label1.Visible = true;
             }
-            CheckUpdate();
+            //CheckUpdate();
+            _ = UpdateAll();
+        }
+        private async Task UpdateAll()
+        {
+            await CheckUpdate();
+            for (int h = 0; h < CommandLineArgs.GetLength(0); h++)
+            {
+                if (CommandLineArgs[h].ToLower().Equals("-updateall"))
+                {
+                    string archi = GetArchBack.CheckIsFile64bit(File.OpenRead(applicationPath + "\\Libre Office\\program\\soffice.exe"));
+                    Version version = new Version(FileVersionInfo.GetVersionInfo(applicationPath + "\\Libre Office\\program\\soffice.exe").FileVersion);
+                    if (branch == "Stable")
+                    {
+                        if (new Version(stabVer[stabVer.Count - 1].ToString()) > new Version(version.Major + "." + version.Minor + "." + version.Build))
+                        {
+                            if (archi == "x64")
+                            {
+                                foreach (string line in stabFile)
+                                {
+                                    if (line.Contains(stabVer[stabVer.Count - 1].ToString() + "_Win_x86-64.msi"))
+                                    {
+                                        await DownloadProgAsync("x86_64", line, stabFold[stabFold.Count - 1].ToString(), "stable");
+                                        File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Stable");
+                                    }
+                                }
+                                for (int i = 0; i < lang.GetLength(0); i++)
+                                {
+                                    if (Directory.Exists(applicationPath + "\\Libre Office\\help\\" + lang[i, 1]))
+                                    {
+                                        foreach (string line in stabFile)
+                                        {
+                                            if (line.Contains(stabVer[stabVer.Count - 1].ToString() + "_Win_x86-64_helppack_" + lang[i, 1] + ".msi"))
+                                            {
+                                                await DownloadProgAsync("x86_64", line, stabFold[stabFold.Count - 1].ToString(), "stable");
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else if (archi == "x86")
+                            {
+                                foreach (string line in stabFile)
+                                {
+                                    if (line.Contains(stabVer[stabVer.Count - 1].ToString() + "_Win_x86-64.msi"))
+                                    {
+                                        await DownloadProgAsync("x86", line.Replace("-64", ""), stabFold[stabFold.Count - 1].ToString(), "stable");
+                                        File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Stable");
+                                    }
+
+                                }
+                                for (int i = 0; i < lang.GetLength(0); i++)
+                                {
+                                    if (Directory.Exists(applicationPath + "\\Libre Office\\help\\" + lang[i, 1]))
+                                    {
+                                        foreach (string line in stabFile)
+                                        {
+                                            if (line.Contains(stabVer[stabVer.Count - 1].ToString() + "_Win_x86-64_helppack_" + lang[i, 1] + ".msi"))
+                                            {
+                                                await DownloadProgAsync("x86", line.Replace("-64", ""), stabFold[stabFold.Count - 1].ToString(), "stable");
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (branch == "Preview")
+                    {
+                        var nVerSp = preVer[preVer.Count - 1].ToString().Split(new char[] { '.' }, 5);
+                        if (new Version($"{nVerSp[0]}.{nVerSp[1]}.{nVerSp[2]}.{nVerSp[3]}") > new Version($"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}"))
+                        {
+                            if (archi == "x64")
+                            {
+                                foreach (string line in preFile)
+                                {
+                                    if (line.Contains(preVer[preVer.Count - 1].ToString() + "_Win_x86-64.msi"))
+                                    {
+                                        await DownloadProgAsync("x86_64", line, preFold[preFold.Count - 1].ToString(), "testing");
+                                        File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Preview");
+                                    }
+
+                                }
+                                for (int i = 0; i < lang.GetLength(0); i++)
+                                {
+                                    if (Directory.Exists(applicationPath + "\\Libre Office\\help\\" + lang[i, 1]))
+                                    {
+                                        foreach (string line in preFile)
+                                        {
+                                            if (line.Contains(preVer[preVer.Count - 1].ToString() + "_Win_x86-64_helppack_" + lang[i, 1] + ".msi"))
+                                            {
+                                                await DownloadProgAsync("x86_64", line, preFold[preFold.Count - 1].ToString(), "testing");
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else if (archi == "x86")
+                            {
+                                foreach (string line in preFile)
+                                {
+                                    if (line.Contains(preVer[preVer.Count - 1].ToString() + "_Win_x86-64.msi"))
+                                    {
+                                        await DownloadProgAsync("x86", line.Replace("-64", ""), preFold[preFold.Count - 1].ToString(), "testing");
+                                        File.WriteAllText(applicationPath + "\\UserData\\Branch.log", "Preview");
+                                    }
+
+                                }
+                                for (int i = 0; i < lang.GetLength(0); i++)
+                                {
+                                    if (Directory.Exists(applicationPath + "\\Libre Office\\help\\" + lang[i, 1]))
+                                    {
+                                        foreach (string line in preFile)
+                                        {
+                                            if (line.Contains(preVer[preVer.Count - 1].ToString() + "_Win_x86-64_helppack_" + lang[i, 1] + ".msi"))
+                                            {
+                                                await DownloadProgAsync("x86", line.Replace("-64", ""), preFold[preFold.Count - 1].ToString(), "testing");
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    await Task.Delay(2000);
+                    Application.Exit();
+                }
+            }
+            
+        }
+        private async void Tester(string arch, string filename, string version, string ring, string archi)
+        {
+            await DownloadProgAsync(arch, filename, version, ring);
+            groupBox1.Text = "Libre Office - Installed: " + branch + " " + FileVersionInfo.GetVersionInfo(applicationPath + "\\Libre Office\\program\\soffice.exe").FileVersion + " " + archi;
+            groupBox1.ForeColor = SystemColors.HotTrack;
+            menuStrip1.Enabled = true;
         }
         private async Task DownloadProgAsync(string arch, string filename, string version, string ring)
         {
@@ -461,7 +621,8 @@ namespace Portable_Libre_Office
                     };
                     try
                     {
-                        var task = webClient.DownloadFileTaskAsync(uri, filename);
+                        var task = webClient.DownloadFileTaskAsync(uri, applicationPath + "\\" + filename);
+                        //await task;
                         list.Add(task);
                     }
                     catch (Exception ex)
@@ -491,19 +652,38 @@ namespace Portable_Libre_Office
                 {
                     if (Directory.Exists(applicationPath + "\\Libre Office"))
                     {
-                        Directory.Delete(applicationPath + "\\Libre Office", true);
+                        if (Directory.Exists(applicationPath + "\\Libre Office\\presets"))
+                        {
+                            Directory.Delete(applicationPath + "\\Libre Office\\presets", true);
+                        }
+                        if (Directory.Exists(applicationPath + "\\Libre Office\\program"))
+                        {
+                            Directory.Delete(applicationPath + "\\Libre Office\\program", true);
+                        }
+                        if (Directory.Exists(applicationPath + "\\Libre Office\\readmes"))
+                        {
+                            Directory.Delete(applicationPath + "\\Libre Office\\readmes", true);
+                        }
+                        if (Directory.Exists(applicationPath + "\\Libre Office\\share"))
+                        {
+                            Directory.Delete(applicationPath + "\\Libre Office\\share", true);
+                        }
+                        if (Directory.Exists(applicationPath + "\\Libre Office\\System"))
+                        {
+                            Directory.Delete(applicationPath + "\\Libre Office\\System", true);
+                        }
+                        if (Directory.Exists(applicationPath + "\\Libre Office\\System64"))
+                        {
+                            Directory.Delete(applicationPath + "\\Libre Office\\System64", true);
+                        }
                     }
                     Thread.Sleep(1000);
-                    if (Directory.Exists(applicationPath + "\\Libre Office"))
-                    {
-                        Directory.Delete(applicationPath + "\\Libre Office", true);
-                    }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
-                string arguments = " /a \"" + filename + "\" /qb Targetdir=\"" + applicationPath + "\\Libre Office\"";
+                string arguments = " /a \"" + applicationPath + "\\" +  filename + "\" /qb Targetdir=\"" + applicationPath + "\\Libre Office\"";
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec";
                 process.StartInfo.Arguments = arguments;
@@ -562,7 +742,7 @@ namespace Portable_Libre_Office
             }
             else if (filename.Contains("helppack"))
             {
-                string arguments = " /a \"" + filename + "\" /qb Targetdir=\"" + applicationPath + "\\Libre Office\"";
+                string arguments = " /a \""+ applicationPath + "\\" + filename + "\" /qb Targetdir=\"" + applicationPath + "\\Libre Office\"";
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec";
                 process.StartInfo.Arguments = arguments;
@@ -579,13 +759,15 @@ namespace Portable_Libre_Office
                         File.Delete(applicationPath + "\\" + filename);
                     }
                 }
+                await Task.WhenAll();
             }
         }
         private void NewMethod()
         {
             if (File.Exists(applicationPath + "\\Libre Office\\program\\soffice.exe"))
             {
-                CheckIsFile64bit(File.OpenRead(applicationPath + "\\Libre Office\\program\\soffice.exe"));
+                string archi = GetArchBack.CheckIsFile64bit(File.OpenRead(applicationPath + "\\Libre Office\\program\\soffice.exe"));
+                groupBox1.Text = "Libre Office - Installed: " + branch + " " + FileVersionInfo.GetVersionInfo(applicationPath + "\\Libre Office\\program\\soffice.exe").FileVersion + " " + archi;
                 groupBox1.ForeColor = SystemColors.HotTrack;
                 menuStrip1.Enabled = true;
             }
@@ -712,63 +894,7 @@ namespace Portable_Libre_Office
                 File.Delete(deskDir + "\\Portable Libre Office Updater.lnk");
             }
         }
-        private void CheckIsFile64bit(FileStream filestream)
-        {
-            //Snippet is from *Thanks*
-            //"https://dotnet-snippets.de/snippet/erkennen-ob-eine-exe-oder-dll-als-64bit-kompiliert-wurde/1181"
-            if (File.Exists(applicationPath + "\\UserData\\Branch.log"))
-            {
-                branch = File.ReadAllText(applicationPath + "\\UserData\\Branch.log");
-            }
-            byte[] _data = new byte[4];
-            filestream.Seek(0x3c, SeekOrigin.Begin);
-            filestream.Read(_data, 0, 4);
-            int _offset = BitConverter.ToInt32(_data, 0);
-
-            if (_offset > 0x3c)
-            {
-                _data = new byte[4];
-                filestream.Seek(_offset, SeekOrigin.Begin);
-                filestream.Read(_data, 0, 4);
-
-                if ((_data[0] == 0x50)
-                    && (_data[1] == 0x45)
-                    && (_data[2] == 0x00)
-                    && (_data[3] == 0x00))
-                {
-                    _data = new byte[20];
-                    filestream.Read(_data, 0, 20);
-                    //int _machine = BitConverter.ToInt16(_data, 0);
-                    _data = new byte[2];
-                    filestream.Read(_data, 0, 2);
-                    int _magicNumber = BitConverter.ToInt16(_data, 0);
-                    if (_magicNumber == 0x010b)
-                    {
-                        groupBox1.Text = "Libre Office - Installed: " + branch + " " + FileVersionInfo.GetVersionInfo(applicationPath + "\\Libre Office\\program\\soffice.exe").FileVersion + " x86";
-                        filestream.Close();
-                        Refresh();
-                    }
-                    else if (_magicNumber == 0x020b)
-                    {
-                        groupBox1.Text = "Libre Office - Installed: " + branch + " " + FileVersionInfo.GetVersionInfo(applicationPath + "\\Libre Office\\program\\soffice.exe").FileVersion + " x64";
-                        filestream.Close();
-                        Refresh();
-                    }
-                }
-                else
-                {
-                    groupBox1.Text = "Libre Office - Installed: " + branch + " " + FileVersionInfo.GetVersionInfo(applicationPath + "\\Libre Office\\program\\soffice.exe").FileVersion;
-                    filestream.Close();
-                    Refresh();
-                }
-            }
-            else
-            {
-                groupBox1.Text = "Libre Office - Installed: " + branch + " " + FileVersionInfo.GetVersionInfo(applicationPath + "\\Libre Office\\program\\soffice.exe").FileVersion;
-                filestream.Close();
-                Refresh();
-            }
-        }
+        
 
         private void CheckBox1_CheckedChanged(object sender, EventArgs e)
         {
@@ -798,7 +924,7 @@ namespace Portable_Libre_Office
                 }
             }
         }
-        private void CheckUpdate()
+        private async Task CheckUpdate()
         {
             GroupBox groupBoxupdate = new GroupBox
             {
@@ -869,11 +995,64 @@ namespace Portable_Libre_Office
                 var response = request.GetResponse();
                 using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                 {
-                    var version = reader.ReadToEnd();
-                    FileVersionInfo testm = FileVersionInfo.GetVersionInfo(applicationPath + "\\Portable Libre Office Updater.exe");
-                    versionLabel.Text = testm.FileVersion + "  >>> " + version;
-                    if (Convert.ToInt32(version.Replace(".", "")) > Convert.ToInt32(testm.FileVersion.Replace(".", "")))
+                    Version version = new Version(reader.ReadToEnd());
+                    Version testm = new Version(FileVersionInfo.GetVersionInfo(applicationPath + "\\Portable Libre Office Updater.exe").FileVersion);
+                    versionLabel.Text = testm + "  >>> " + version;
+                    if (version > testm)
                     {
+                        for (int i = 0; i < CommandLineArgs.GetLength(0); i++)
+                        {
+                            if (CommandLineArgs[i].ToLower().Equals("-updateall"))
+                            {
+                                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                                using (WebClient myWebClient2 = new WebClient())
+                                {
+                                    myWebClient2.DownloadFile($"https://github.com/UndertakerBen/PorLibOfficeUpd/releases/download/v{version}/Portable.LibreOffice.Updater.v{version}.zip", applicationPath + "\\Portable.LibreOffice.Updater.v" + version + ".zip");
+                                }
+                                System.IO.Compression.ZipFile.ExtractToDirectory(applicationPath + "\\Portable.LibreOffice.Updater.v" + version + ".zip", applicationPath + "\\Temp");
+                                var files = Directory.GetFiles(applicationPath + "\\Bin");
+                                foreach (string file in files)
+                                {
+                                    if (File.Exists(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file)) & File.Exists(applicationPath + "\\Bin\\" + Path.GetFileName(file)))
+                                    {
+                                        Version binLauncher = new Version(FileVersionInfo.GetVersionInfo(applicationPath + "\\Bin\\" + Path.GetFileName(file)).FileVersion);
+                                        Version tempLauncher = new Version(FileVersionInfo.GetVersionInfo(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file)).FileVersion);
+                                        if (tempLauncher > binLauncher)
+                                        {
+                                            File.Copy(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file), applicationPath + "\\Bin\\" + Path.GetFileName(file), true);
+                                            if (File.Exists(applicationPath + "\\" + Path.GetFileName(file)))
+                                            {
+                                                Version istLauncher = new Version(FileVersionInfo.GetVersionInfo(applicationPath + "\\" + Path.GetFileName(file)).FileVersion);
+                                                if (tempLauncher > istLauncher)
+                                                {
+                                                    File.Copy(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file), applicationPath + "\\" + Path.GetFileName(file), true);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                File.AppendAllText(applicationPath + "\\Update.cmd", "@echo off" + "\r\n" +
+                                    "timeout /t 5 /nobreak" + "\r\n" +
+                                    "copy /Y \"" + applicationPath + "\\Temp\\Portable Libre Office Updater.exe\" " + "\"" + applicationPath + "\\Portable Libre Office Updater.exe\"\r\n" +
+                                    "call cmd /c Start /b \"\" " + "\"" + applicationPath + "\\Portable Libre Office Updater.exe\" -UpdateAll\r\n" +
+                                    "rd /s /q \"" + applicationPath + "\\Temp\"\r\n" +
+                                    "del /f /q \"" + applicationPath + "\\Update.cmd\" && exit\r\n" +
+                                    "exit\r\n");
+                                File.Delete(applicationPath + "\\Portable.LibreOffice.Updater.v" + version + ".zip");
+                                string arguments = " /c call " + applicationPath + "\\Update.cmd";
+                                Process process = new Process();
+                                process.StartInfo.FileName = "cmd.exe";
+                                process.StartInfo.Arguments = arguments;
+                                process.Start();
+                                Close();
+                                await Task.Delay(2000);
+                            }
+                            else
+                            {
+                                Controls.Add(groupBoxupdate);
+                                groupBox3.Enabled = false;
+                            }
+                        }
                         Controls.Add(groupBoxupdate);
                         groupBox1.Enabled = false;
                         groupBox4.Enabled = false;
@@ -892,12 +1071,12 @@ namespace Portable_Libre_Office
                 var response2 = request2.GetResponse();
                 using (StreamReader reader = new StreamReader(response2.GetResponseStream()))
                 {
-                    var version = reader.ReadToEnd();
+                    Version version = new Version(reader.ReadToEnd());
                     reader.Close();
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                     using (WebClient myWebClient2 = new WebClient())
                     {
-                        myWebClient2.DownloadFile($"https://github.com/UndertakerBen/PorLibOfficeUpd/releases/download/v{version}/Portable.LibreOffice.Updater.v{version}.zip", @"Portable.LibreOffice.Updater.v" + version + ".zip");
+                        myWebClient2.DownloadFile($"https://github.com/UndertakerBen/PorLibOfficeUpd/releases/download/v{version}/Portable.LibreOffice.Updater.v{version}.zip", applicationPath + "\\Portable.LibreOffice.Updater.v" + version + ".zip");
                     }
                     System.IO.Compression.ZipFile.ExtractToDirectory(applicationPath + "\\Portable.LibreOffice.Updater.v" + version + ".zip", applicationPath + "\\Temp");
                     var files = Directory.GetFiles(applicationPath + "\\Bin");
@@ -905,15 +1084,15 @@ namespace Portable_Libre_Office
                     {
                         if (File.Exists(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file)) & File.Exists(applicationPath + "\\Bin\\" + Path.GetFileName(file)))
                         {
-                            FileVersionInfo binLauncher = FileVersionInfo.GetVersionInfo(applicationPath + "\\Bin\\" + Path.GetFileName(file));
-                            FileVersionInfo tempLauncher = FileVersionInfo.GetVersionInfo(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file));
-                            if (Convert.ToInt32(tempLauncher.FileVersion.Replace(".", "")) > Convert.ToInt32(binLauncher.FileVersion.Replace(".", "")))
+                            Version binLauncher = new Version(FileVersionInfo.GetVersionInfo(applicationPath + "\\Bin\\" + Path.GetFileName(file)).FileVersion);
+                            Version tempLauncher = new Version(FileVersionInfo.GetVersionInfo(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file)).FileVersion);
+                            if (tempLauncher > binLauncher)
                             {
                                 File.Copy(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file), applicationPath + "\\Bin\\" + Path.GetFileName(file), true);
                                 if (File.Exists(applicationPath + "\\" + Path.GetFileName(file)))
                                 {
-                                    FileVersionInfo istLauncher = FileVersionInfo.GetVersionInfo(applicationPath + "\\" + Path.GetFileName(file));
-                                    if (Convert.ToInt32(tempLauncher.FileVersion.Replace(".", "")) > Convert.ToInt32(istLauncher.FileVersion.Replace(".", "")))
+                                    Version istLauncher = new Version(FileVersionInfo.GetVersionInfo(applicationPath + "\\" + Path.GetFileName(file)).FileVersion);
+                                    if (tempLauncher > istLauncher)
                                     {
                                         File.Copy(applicationPath + "\\Temp\\Bin\\" + Path.GetFileName(file), applicationPath + "\\" + Path.GetFileName(file), true);
                                     }
@@ -921,7 +1100,7 @@ namespace Portable_Libre_Office
                             }
                         }
                     }
-                    File.AppendAllText(@"Update.cmd", "@echo off" + "\n" +
+                    File.AppendAllText(applicationPath + "\\Update.cmd", "@echo off" + "\n" +
                         "timeout /t 1 /nobreak" + "\n" +
                         "copy /Y \"" + applicationPath + "\\Temp\\Portable Libre Office Updater.exe\" " + "\"" + applicationPath + "\\Portable Libre Office Updater.exe\"\n" +
                         "call cmd /c Start /b \"\" " + "\"" + applicationPath + "\\Portable Libre Office Updater.exe\"\n" +
@@ -937,13 +1116,68 @@ namespace Portable_Libre_Office
                     Close();
                 }
             }
+            await Task.WhenAll();
         }
 
         private void InfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FileVersionInfo updVersion = FileVersionInfo.GetVersionInfo(applicationPath + "\\Portable Libre Office Updater.exe");
-            FileVersionInfo launcherVersion = FileVersionInfo.GetVersionInfo(applicationPath + "\\Bin\\Libre Office Portable Launcher.exe");
-            MessageBox.Show("Updater Version - " + updVersion.FileVersion + "\nLauncher Version - " + launcherVersion.FileVersion, "Version Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Version updVersion = new Version(FileVersionInfo.GetVersionInfo(applicationPath + "\\Portable Libre Office Updater.exe").FileVersion);
+            Version launcherVersion = new Version(FileVersionInfo.GetVersionInfo(applicationPath + "\\Bin\\Libre Office Portable Launcher.exe").FileVersion);
+            MessageBox.Show("Updater Version - " + updVersion + "\nLauncher Version - " + launcherVersion, "Version Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+    }
+    public static class GetArchBack
+    {
+        public static string CheckIsFile64bit(this FileStream filestream)
+        {
+            //Snippet is from *Thanks*
+            //"https://dotnet-snippets.de/snippet/erkennen-ob-eine-exe-oder-dll-als-64bit-kompiliert-wurde/1181"
+
+            byte[] _data = new byte[4];
+            filestream.Seek(0x3c, SeekOrigin.Begin);
+            filestream.Read(_data, 0, 4);
+            int _offset = BitConverter.ToInt32(_data, 0);
+
+            if (_offset > 0x3c)
+            {
+                _data = new byte[4];
+                filestream.Seek(_offset, SeekOrigin.Begin);
+                filestream.Read(_data, 0, 4);
+
+                if ((_data[0] == 0x50)
+                    && (_data[1] == 0x45)
+                    && (_data[2] == 0x00)
+                    && (_data[3] == 0x00))
+                {
+                    _data = new byte[20];
+                    filestream.Read(_data, 0, 20);
+                    _data = new byte[2];
+                    filestream.Read(_data, 0, 2);
+                    int _magicNumber = BitConverter.ToInt16(_data, 0);
+                    if (_magicNumber == 0x010b)
+                    {
+                        filestream.Close();
+                        return "x86";
+                    }
+                    else if (_magicNumber == 0x020b)
+                    {
+                        filestream.Close();
+                        return "x64";
+                    }
+                }
+                else
+                {
+                    filestream.Close();
+                    return "";
+                }
+            }
+            else
+            {
+                filestream.Close();
+                return "";
+            }
+            filestream.Close();
+            return "";
         }
     }
 }
