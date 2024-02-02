@@ -17,7 +17,7 @@ namespace Portable_Libre_Office
                 {
                     for (int i = 0; i < checkedListBox1.Items.Count; i++)
                     {
-                        foreach (string line in File.ReadLines(@"Setup.cfg"))
+                        foreach (string line in File.ReadLines(applicationPath + "\\Setup.cfg"))
                         {
                             if (line.Contains("D-" + checkedListBox1.GetItemText(i) + "-" + Convert.ToString(checkedListBox1.Items[i])))
                             {
@@ -31,7 +31,7 @@ namespace Portable_Libre_Office
                     }
                     for (int i = 0; i < checkedListBox4.Items.Count; i++)
                     {
-                        foreach (string line in File.ReadLines(@"Setup.cfg"))
+                        foreach (string line in File.ReadLines(applicationPath + "\\Setup.cfg"))
                         {
                             if (line.Contains("UI-" + checkedListBox4.GetItemText(i) + "-" + Convert.ToString(checkedListBox4.Items[i])))
                             {
@@ -45,7 +45,7 @@ namespace Portable_Libre_Office
                     }
                     for (int i = 0; i < checkedListBox3.Items.Count; i++)
                     {
-                        foreach (string line in File.ReadLines(@"Setup.cfg"))
+                        foreach (string line in File.ReadLines(applicationPath + "\\Setup.cfg"))
                         {
                             if (line.Contains("E-" + checkedListBox3.GetItemText(i) + "-" + Convert.ToString(checkedListBox3.Items[i])))
                             {
@@ -59,7 +59,7 @@ namespace Portable_Libre_Office
                     }
                     for (int i = 0; i < checkedListBox2.Items.Count; i++)
                     {
-                        foreach (string line in File.ReadLines(@"Setup.cfg"))
+                        foreach (string line in File.ReadLines(applicationPath + "\\Setup.cfg"))
                         {
                             if (line.Contains("Ext-" + checkedListBox2.GetItemText(i) + "-" + Convert.ToString(checkedListBox2.Items[i])))
                             {
@@ -71,7 +71,7 @@ namespace Portable_Libre_Office
                             }
                         }
                     }
-                    foreach (string line in File.ReadLines(@"Setup.cfg"))
+                    foreach (string line in File.ReadLines(applicationPath + "\\Setup.cfg"))
                     {
                         if (line.Contains("HolgiMode"))
                         {
@@ -106,35 +106,35 @@ namespace Portable_Libre_Office
             button1.Click += new System.EventHandler(Button1_Click);
             void Button1_Click(object sender, EventArgs e)
             {
-                File.AppendAllText(@"Setup.cfg", "[Dictionaries]" + Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", "[Dictionaries]" + Environment.NewLine);
                 for (int i = 0; i < checkedListBox1.Items.Count; i++)
                 {
-                    File.AppendAllText(@"Setup.cfg", "D-" + checkedListBox1.GetItemText(i) + "-" + Convert.ToString(checkedListBox1.Items[i]) + "=" + Convert.ToInt32(checkedListBox1.GetItemCheckState(i)) + Environment.NewLine);
+                    File.AppendAllText(applicationPath + "\\Setup.cfg", "D-" + checkedListBox1.GetItemText(i) + "-" + Convert.ToString(checkedListBox1.Items[i]) + "=" + Convert.ToInt32(checkedListBox1.GetItemCheckState(i)) + Environment.NewLine);
                 }
-                File.AppendAllText(@"Setup.cfg", Environment.NewLine);
-                File.AppendAllText(@"Setup.cfg", "[Extras]" + Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", "[Extras]" + Environment.NewLine);
                 for (int i = 0; i < checkedListBox3.Items.Count; i++)
                 {
-                    File.AppendAllText(@"Setup.cfg", "E-" + checkedListBox3.GetItemText(i) + "-" + Convert.ToString(checkedListBox3.Items[i]) + "=" + Convert.ToInt32(checkedListBox3.GetItemCheckState(i)) + Environment.NewLine);
+                    File.AppendAllText(applicationPath + "\\Setup.cfg", "E-" + checkedListBox3.GetItemText(i) + "-" + Convert.ToString(checkedListBox3.Items[i]) + "=" + Convert.ToInt32(checkedListBox3.GetItemCheckState(i)) + Environment.NewLine);
                 }
-                File.AppendAllText(@"Setup.cfg", Environment.NewLine);
-                File.AppendAllText(@"Setup.cfg", "[Extensions]" + Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", "[Extensions]" + Environment.NewLine);
                 for (int i = 0; i < checkedListBox2.Items.Count; i++)
                 {
-                    File.AppendAllText(@"Setup.cfg", "Ext-" + checkedListBox2.GetItemText(i) + "-" + Convert.ToString(checkedListBox2.Items[i]) + "=" + Convert.ToInt32(checkedListBox2.GetItemCheckState(i)) + Environment.NewLine);
+                    File.AppendAllText(applicationPath + "\\Setup.cfg", "Ext-" + checkedListBox2.GetItemText(i) + "-" + Convert.ToString(checkedListBox2.Items[i]) + "=" + Convert.ToInt32(checkedListBox2.GetItemCheckState(i)) + Environment.NewLine);
                 }
-                File.AppendAllText(@"Setup.cfg", Environment.NewLine);
-                File.AppendAllText(@"Setup.cfg", "[User interface languages]" + Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", "[User interface languages]" + Environment.NewLine);
                 for (int i = 0; i < checkedListBox4.Items.Count; i++)
                 {
-                    File.AppendAllText(@"Setup.cfg", "UI-" + checkedListBox4.GetItemText(i) + "-" + Convert.ToString(checkedListBox4.Items[i]) + "=" + Convert.ToInt32(checkedListBox4.GetItemCheckState(i)) + Environment.NewLine);
+                    File.AppendAllText(applicationPath + "\\Setup.cfg", "UI-" + checkedListBox4.GetItemText(i) + "-" + Convert.ToString(checkedListBox4.Items[i]) + "=" + Convert.ToInt32(checkedListBox4.GetItemCheckState(i)) + Environment.NewLine);
                 }
-                File.AppendAllText(@"Setup.cfg", Environment.NewLine);
-                File.AppendAllText(@"Setup.cfg", "[HolgisInsaneMode]" + Environment.NewLine);
-                File.AppendAllText(@"Setup.cfg", "HolgiMode" + "=" + Convert.ToInt32(checkBox1.Checked) + Environment.NewLine);
-                File.AppendAllText(@"Setup.cfg", Environment.NewLine);
-                File.AppendAllText(@"Setup.cfg", "[DeleteDownloadedFiles]" + Environment.NewLine);
-                File.AppendAllText(@"Setup.cfg", "DeleteFiles" + "=" + Convert.ToInt32(Form1.checkBox1.Checked) + Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", "[HolgisInsaneMode]" + Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", "HolgiMode" + "=" + Convert.ToInt32(checkBox1.Checked) + Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", "[DeleteDownloadedFiles]" + Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", "DeleteFiles" + "=" + Convert.ToInt32(Form1.checkBox1.Checked) + Environment.NewLine);
                 if (filename == null)
                 {
                     Close();
@@ -157,7 +157,7 @@ namespace Portable_Libre_Office
             //{
             for (int i = 0; i < uiLangs.GetLength(0); i++)
             {
-                foreach (string line in File.ReadLines(@"Setup.cfg"))
+                foreach (string line in File.ReadLines(applicationPath + "\\Setup.cfg"))
                 {
                     if (line.Contains("UI-" + i + "-" + uiLangs[i, 0]))
                     {
@@ -487,7 +487,7 @@ namespace Portable_Libre_Office
             }
             for (int i = 0; i < dictLangs.GetLength(0); i++)
             {
-                foreach (string line in File.ReadLines(@"Setup.cfg"))
+                foreach (string line in File.ReadLines(applicationPath + "\\Setup.cfg"))
                 {
                     if (line.Contains("D-" + i + "-" + dictLangs[i, 0]))
                     {
@@ -502,7 +502,7 @@ namespace Portable_Libre_Office
                     }
                 }
             }
-            foreach (string line in File.ReadLines(@"Setup.cfg"))
+            foreach (string line in File.ReadLines(applicationPath + "\\Setup.cfg"))
             {
                 if (line.Contains("Image Filters"))
                 {
@@ -701,10 +701,10 @@ namespace Portable_Libre_Office
             {
                 File.Delete(applicationPath + "\\Libre Office\\program\\so_activex.dll");
             }
-            if (File.Exists(applicationPath + "\\Libre Office\\share\\registry\\onlineupdate.xcd"))
+            /*if (File.Exists(applicationPath + "\\Libre Office\\share\\registry\\onlineupdate.xcd"))
             {
                 File.Delete(applicationPath + "\\Libre Office\\share\\registry\\onlineupdate.xcd");
-            }
+            }*/
             if (File.Exists(applicationPath + "\\Libre Office\\program\\quickstart.exe"))
             {
                 File.Delete(applicationPath + "\\Libre Office\\program\\quickstart.exe");
@@ -799,7 +799,7 @@ namespace Portable_Libre_Office
                     File.Copy(applicationPath + "\\Libre Office\\System64\\vcruntime140_1.dll", applicationPath + "\\Libre Office\\program\\vcruntime140_1.dll", true);
                 }
             }
-            foreach (string line in File.ReadLines(@"Setup.cfg"))
+            foreach (string line in File.ReadLines(applicationPath + "\\Setup.cfg"))
             {
                 if (line.Contains("HolgiMode"))
                 {
@@ -948,35 +948,35 @@ namespace Portable_Libre_Office
 
         private void UserChoice_FormClosed(object sender, FormClosedEventArgs e)
         {
-            File.AppendAllText(@"Setup.cfg", "[Dictionaries]" + Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", "[Dictionaries]" + Environment.NewLine);
             for (int i = 0; i < checkedListBox1.Items.Count; i++)
             {
-                File.AppendAllText(@"Setup.cfg", "D-" + checkedListBox1.GetItemText(i) + "-" + Convert.ToString(checkedListBox1.Items[i]) + "=" + Convert.ToInt32(checkedListBox1.GetItemCheckState(i)) + Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", "D-" + checkedListBox1.GetItemText(i) + "-" + Convert.ToString(checkedListBox1.Items[i]) + "=" + Convert.ToInt32(checkedListBox1.GetItemCheckState(i)) + Environment.NewLine);
             }
-            File.AppendAllText(@"Setup.cfg", Environment.NewLine);
-            File.AppendAllText(@"Setup.cfg", "[Extras]" + Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", "[Extras]" + Environment.NewLine);
             for (int i = 0; i < checkedListBox3.Items.Count; i++)
             {
-                File.AppendAllText(@"Setup.cfg", "E-" + checkedListBox3.GetItemText(i) + "-" + Convert.ToString(checkedListBox3.Items[i]) + "=" + Convert.ToInt32(checkedListBox3.GetItemCheckState(i)) + Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", "E-" + checkedListBox3.GetItemText(i) + "-" + Convert.ToString(checkedListBox3.Items[i]) + "=" + Convert.ToInt32(checkedListBox3.GetItemCheckState(i)) + Environment.NewLine);
             }
-            File.AppendAllText(@"Setup.cfg", Environment.NewLine);
-            File.AppendAllText(@"Setup.cfg", "[Extensions]" + Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", "[Extensions]" + Environment.NewLine);
             for (int i = 0; i < checkedListBox2.Items.Count; i++)
             {
-                File.AppendAllText(@"Setup.cfg", "Ext-" + checkedListBox2.GetItemText(i) + "-" + Convert.ToString(checkedListBox2.Items[i]) + "=" + Convert.ToInt32(checkedListBox2.GetItemCheckState(i)) + Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", "Ext-" + checkedListBox2.GetItemText(i) + "-" + Convert.ToString(checkedListBox2.Items[i]) + "=" + Convert.ToInt32(checkedListBox2.GetItemCheckState(i)) + Environment.NewLine);
             }
-            File.AppendAllText(@"Setup.cfg", Environment.NewLine);
-            File.AppendAllText(@"Setup.cfg", "[User interface languages]" + Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", "[User interface languages]" + Environment.NewLine);
             for (int i = 0; i < checkedListBox4.Items.Count; i++)
             {
-                File.AppendAllText(@"Setup.cfg", "UI-" + checkedListBox4.GetItemText(i) + "-" + Convert.ToString(checkedListBox4.Items[i]) + "=" + Convert.ToInt32(checkedListBox4.GetItemCheckState(i)) + Environment.NewLine);
+                File.AppendAllText(applicationPath + "\\Setup.cfg", "UI-" + checkedListBox4.GetItemText(i) + "-" + Convert.ToString(checkedListBox4.Items[i]) + "=" + Convert.ToInt32(checkedListBox4.GetItemCheckState(i)) + Environment.NewLine);
             }
-            File.AppendAllText(@"Setup.cfg", Environment.NewLine);
-            File.AppendAllText(@"Setup.cfg", "[HolgisInsaneMode]" + Environment.NewLine);
-            File.AppendAllText(@"Setup.cfg", "HolgiMode" + "=" + Convert.ToInt32(checkBox1.Checked) + Environment.NewLine);
-            File.AppendAllText(@"Setup.cfg", Environment.NewLine);
-            File.AppendAllText(@"Setup.cfg", "[DeleteDownloadedFiles]" + Environment.NewLine);
-            File.AppendAllText(@"Setup.cfg", "DeleteFiles" + "=" + Convert.ToInt32(Form1.checkBox1.Checked) + Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", "[HolgisInsaneMode]" + Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", "HolgiMode" + "=" + Convert.ToInt32(checkBox1.Checked) + Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", "[DeleteDownloadedFiles]" + Environment.NewLine);
+            File.AppendAllText(applicationPath + "\\Setup.cfg", "DeleteFiles" + "=" + Convert.ToInt32(Form1.checkBox1.Checked) + Environment.NewLine);
         }
     }
 }
